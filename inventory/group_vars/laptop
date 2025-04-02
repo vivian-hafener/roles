@@ -1,0 +1,5 @@
+---
+tz: America/Denver
+ntp: true
+packages:
+  - libreoffice

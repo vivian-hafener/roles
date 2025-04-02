@@ -1,0 +1,20 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+    - name: Install basic packages
+      package:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ packages }}"
+
+- name: Install packages based on group
+  hosts: laptop, python-devel
+  become: yes
+  tasks:
+    - name: Install packages for the group
+      package:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ packages }}"
+      when: "'laptop' in group_names or 'python-devel' in group_names"
