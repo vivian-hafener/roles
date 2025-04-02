@@ -3,3 +3,6 @@ tz: America/Denver
 ntp: true
 packages:
   - libreoffice
+  - calibre
+  - code
+  - alacritty

@@ -1,0 +1,18 @@
+---
+user: june
+packages:
+  - vim
+  - htop
+  - base-devel
+  - git
+  - tmux
+  - ssh
+  - zsh
+  - nmap
+  - sl
+  - ranger
+  - ufw
+  - pandoc
+  - curl
+  - sudo
+  - net-tools

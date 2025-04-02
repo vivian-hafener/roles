@@ -18,3 +18,25 @@
         state: present
       loop: "{{ packages }}"
       when: "'laptop' in group_names or 'python-devel' in group_names"
+
+- name: Create folders for development hosts
+  hosts: python-devel, i3wm
+  tasks:
+    - name: Create repos dir
+      ansible.builtin.file:
+        path: "{{ ansible_env.HOME }}/repos"
+        state: directory
+        mode: '0755'
+    - name: Clone repos
+      git:
+        repo: "{{ item }}"
+        dest: "{{ ansible_env.HOME }}/repos/"
+        clone: yes
+        update: yes
+      loop: "{{ repos }}"
+
+- name: Install oh my zsh
+  hosts: all
+  become: yes
+  become_user: "{{ user }}"
+  command: 'sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"'

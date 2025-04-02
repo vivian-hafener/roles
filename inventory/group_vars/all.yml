@@ -1,9 +1,0 @@
----
-packages:
-  - vim
-  - htop
-  - base-devel
-  - git
-  - tmux
-  - ssh
-  - code
