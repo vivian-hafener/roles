@@ -35,8 +35,11 @@
         update: yes
       loop: "{{ repos }}"
 
-- name: Install oh my zsh
+- name: Configure shell environment
   hosts: all
-  become: yes
-  become_user: "{{ user }}"
-  command: 'sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"'
+  tasks:
+    - name: Install Oh My ZSH
+      become: yes
+      become_user: "{{ user }}"
+      ansible.builtin.command:
+        cmd: 'sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"'
