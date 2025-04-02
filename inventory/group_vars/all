@@ -16,3 +16,5 @@ packages:
   - curl
   - sudo
   - net-tools
+  - tree
+  

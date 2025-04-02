@@ -6,3 +6,6 @@ packages:
   - calibre
   - code
   - alacritty
+  - signal-desktop
+  - thunderbird
+  - firefox
