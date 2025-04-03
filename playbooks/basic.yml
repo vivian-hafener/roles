@@ -6,21 +6,31 @@
       package:
         name: "{{ item }}"
         state: present
-      loop: "{{ packages }}"
+      loop: "{{ inventory.group_vars.all.packages }}"
 
 - name: Install packages based on group
-  hosts: laptop, python-devel
+  hosts: laptop
   become: yes
   tasks:
     - name: Install packages for the group
       package:
         name: "{{ item }}"
         state: present
-      loop: "{{ packages }}"
-      when: "'laptop' in group_names or 'python-devel' in group_names"
+      loop: "{{ inventory.group_vars.laptop.packages }}"
+
+
+- name: Install packages based on group
+  hosts: python-devel
+  become: yes
+  tasks:
+    - name: Install packages for the group
+      package:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ inventory.group_vars.pythondevel.packages }}"
 
 - name: Create folders for development hosts
-  hosts: python-devel, i3wm
+  hosts: pythondevel
   tasks:
     - name: Create repos dir
       ansible.builtin.file:
@@ -33,7 +43,24 @@
         dest: "{{ ansible_env.HOME }}/repos/"
         clone: yes
         update: yes
-      loop: "{{ repos }}"
+      loop: "{{ inventory.group_vars.pythondevelrepos }}"
+
+- name: Create folders for development hosts
+  hosts: i3wm
+  tasks:
+    - name: Create repos dir
+      ansible.builtin.file:
+        path: "{{ ansible_env.HOME }}/repos"
+        state: directory
+        mode: '0755'
+    - name: Clone repos
+      git:
+        repo: "{{ item }}"
+        dest: "{{ ansible_env.HOME }}/repos/"
+        clone: yes
+        update: yes
+      loop: "{{ inventory.group_vars.i3wm.repos }}"
+
 
 - name: Configure shell environment
   hosts: all
