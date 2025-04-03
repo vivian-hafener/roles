@@ -6,7 +6,7 @@
       package:
         name: "{{ item }}"
         state: present
-      loop: "{{ inventory.group_vars.all.packages }}"
+      loop: "{{ group_vars.all.packages }}"
 
 - name: Install packages based on group
   hosts: laptop
@@ -16,7 +16,7 @@
       package:
         name: "{{ item }}"
         state: present
-      loop: "{{ inventory.group_vars.laptop.packages }}"
+      loop: "{{ group_vars.laptop.packages }}"
 
 
 - name: Install packages based on group
@@ -27,7 +27,7 @@
       package:
         name: "{{ item }}"
         state: present
-      loop: "{{ inventory.group_vars.pythondevel.packages }}"
+      loop: "{{ group_vars.pythondevel.packages }}"
 
 - name: Create folders for development hosts
   hosts: pythondevel
@@ -43,9 +43,9 @@
         dest: "{{ ansible_env.HOME }}/repos/"
         clone: yes
         update: yes
-      loop: "{{ inventory.group_vars.pythondevelrepos }}"
+      loop: "{{ group_vars.pythondevelrepos }}"
 
-- name: Create folders for development hosts
+- name: Set up i3
   hosts: i3wm
   tasks:
     - name: Create repos dir
@@ -59,7 +59,28 @@
         dest: "{{ ansible_env.HOME }}/repos/"
         clone: yes
         update: yes
-      loop: "{{ inventory.group_vars.i3wm.repos }}"
+      loop: "{{ group_vars.i3wm.repos }}"
+    - name: Make subfolders for configurations requiring them
+      ansible.builtin.file:
+        path: "{{ ansible_env.HOME }}/.config/{{ item }}"
+        state: directory
+        mode: '0755'
+      loop:
+        - "polybar"
+    - name: Build out hard links for dotfiles
+      ansible.builtin.file:
+        src: "{{ ansible_env.HOME }}/repos/dotfiles/{{ item.src }}"
+        dest: "{{ ansible_env.HOME }}/.config/{{ item.dest }}"
+        state: hard
+      loop:
+        - { src: "i3", dest: "i3"}
+        - { src: "alacritty.yml", dest: "alacritty.yml"}
+        - { src: "polybar.ini", dest: "polybar/config.ini"}
+    - name: Kick i3
+      become: yes
+      become_user: "{{ user }}"
+      command:
+        cmd: "i3-msg restart"
 
 
 - name: Configure shell environment
@@ -70,3 +91,9 @@
       become_user: "{{ user }}"
       ansible.builtin.command:
         cmd: 'sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"'
+    - name: Change user shell to ZSH
+      become: yes
+      become_user: "{{ user }}"
+      ansible.builtin.command:
+        cmd: 'chsh -s $(which zsh)'
+

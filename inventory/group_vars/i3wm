@@ -1,3 +1,6 @@
 ---
 repos:
     - https://github.com/vivian-hafener/dotfiles.git
+
+packages:
+    - rofi
