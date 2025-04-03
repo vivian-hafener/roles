@@ -6,7 +6,7 @@ packages:
   - base-devel
   - git
   - tmux
-  - ssh
+  - openssh
   - zsh
   - nmap
   - sl
