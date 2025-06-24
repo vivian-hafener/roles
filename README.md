@@ -1,2 +1,1 @@
-# roles
-This is a work in progress towards functional configuration management for the systems for which I am responsible
+# Ansible roles to provide consistent configuration for my laptops

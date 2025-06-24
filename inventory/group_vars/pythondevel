@@ -1,8 +1,0 @@
----
-repos:
-    - https://github.com/vivian-hafener/docs.git
-packages:
-    - base-devel
-    - python3
-    - python-pip
-    - code

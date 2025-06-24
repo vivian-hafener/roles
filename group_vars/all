@@ -1,9 +1,8 @@
 ---
-user: vivian
+user: vhafener
 packages:
   - vim
   - htop
-  - base-devel
   - git
   - tmux
   - openssh
@@ -17,4 +16,8 @@ packages:
   - sudo
   - net-tools
   - tree
-  
+  - tlp
+repos: 
+  - dotfiles:
+    name: dotfiles
+    url: https://github.com/vivian-hafener/dotfiles.git

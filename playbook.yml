@@ -1,0 +1,57 @@
+---
+- name: Install basic packages
+  hosts: all
+  become: yes
+  tasks:
+    - name: Install basic packages
+      package:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ packages }}"
+
+    - name: Create repos dir
+      ansible.builtin.file:
+        path: "/home/{{ user }}/repos"
+        state: directory
+        mode: '0755'
+
+    - name: Clone repos
+      git:
+        repo: "{{ item.url }}"
+        dest: "/home/{{ user }}/repos/{{ item.name }}"
+        clone: yes
+        update: yes
+      loop: "{{ repos }}"
+
+    - name: Set user shell to zsh
+      ansible.builtin.user:
+        name: "{{ user }}"
+        shell: /bin/zsh
+      become: true
+
+    - name: Download ohmyzsh
+      ansible.builtin.get_url:
+        url: https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
+        dest: "/home/{{ user }}/install.sh"
+        mode: '0755'
+
+    - name: Install ohmyzsh
+      ansible.builtin.script:
+        cmd: "/home/{{ user }}/install.sh"
+      ignore_errors: true
+
+    - name: Configure ohmyzsh
+      ansible.builtin.copy:
+        src: "/home/{{ user }}/repos/dotfiles/zshrc"
+        dest: "/home/{{ user }}/.zshrc"     
+
+    - name: Configure tlp
+      ansible.builtin.copy:
+        src: "/home/{{ user }}/repos/dotfiles/tlp.conf"
+        dest: "/etc/tlp.conf"
+
+    - name: Start tlp
+      ansible.builtin.systemd_service:
+        name: tlp
+        enabled: true
+        state: started
