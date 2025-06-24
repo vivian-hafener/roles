@@ -1,12 +1,22 @@
 ---
-- hosts: all
+- hosts: localhost
+  gather_facts: false
+  vars:
+    test_var1: A
+    test_var2: "{{ test_var1 }}"
+  tasks:
+    - debug:
+        var: vars
+
+- name: Install basic packages
+  hosts: all
   become: yes
   tasks:
     - name: Install basic packages
       package:
         name: "{{ item }}"
         state: present
-      loop: "{{ group_vars.all.packages }}"
+      loop: "{{ all.packages }}"
 
 - name: Install packages based on group
   hosts: laptop
@@ -16,7 +26,7 @@
       package:
         name: "{{ item }}"
         state: present
-      loop: "{{ group_vars.laptop.packages }}"
+      loop: "{{ laptop.packages }}"
 
 
 - name: Install packages based on group
@@ -27,7 +37,7 @@
       package:
         name: "{{ item }}"
         state: present
-      loop: "{{ group_vars.pythondevel.packages }}"
+      loop: "{{ pythondevel.packages }}"
 
 - name: Create folders for development hosts
   hosts: pythondevel
@@ -43,7 +53,7 @@
         dest: "{{ ansible_env.HOME }}/repos/"
         clone: yes
         update: yes
-      loop: "{{ group_vars.pythondevelrepos }}"
+      loop: "{{ pythondevelrepos }}"
 
 - name: Set up i3
   hosts: i3wm
@@ -59,7 +69,7 @@
         dest: "{{ ansible_env.HOME }}/repos/"
         clone: yes
         update: yes
-      loop: "{{ group_vars.i3wm.repos }}"
+      loop: "{{ i3wm.repos }}"
     - name: Make subfolders for configurations requiring them
       ansible.builtin.file:
         path: "{{ ansible_env.HOME }}/.config/{{ item }}"
@@ -84,7 +94,6 @@
 
 
 - name: Configure shell environment
-  hosts: all
   tasks:
     - name: Install Oh My ZSH
       become: yes
